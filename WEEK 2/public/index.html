@@ -14,6 +14,42 @@
     <h1>HTTP Methods Demo</h1>
     <p style="text-align: center;">Learn GET, POST, PUT, DELETE methods</p>
 
+    <!-- Calculator Section -->
+    <div class="method">
+        <h2>Basic Calculator - GET Methods</h2>
+        <p>Simple calculator using GET requests</p>
+        
+        <input type="number" id="calcNum1" placeholder="First number" value="10">
+        <input type="number" id="calcNum2" placeholder="Second number" value="5">
+        <br>
+        <button onclick="addNumbers()">Add (+)</button>
+        <button onclick="subtractNumbers()">Subtract (-)</button>
+        <button onclick="multiplyNumbers()">Multiply (×)</button>
+        <button onclick="divideNumbers()">Divide (÷)</button>
+        <button onclick="powerNumbers()">Power (^)</button>
+        
+        <div class="result" id="calcResult"></div>
+    </div>
+
+    <!-- POST Calculator -->
+    <div class="method">
+        <h2>Calculator - POST Method</h2>
+        <p>Calculator using POST request with operation selection</p>
+        
+        <input type="number" id="postNum1" placeholder="First number" value="15">
+        <input type="number" id="postNum2" placeholder="Second number" value="3">
+        <select id="operation">
+            <option value="add">Add (+)</option>
+            <option value="subtract">Subtract (-)</option>
+            <option value="multiply">Multiply (×)</option>
+            <option value="divide">Divide (÷)</option>
+            <option value="power">Power (^)</option>
+        </select>
+        <button onclick="calculateWithPost()">Calculate</button>
+        
+        <div class="result" id="postCalcResult"></div>
+    </div>
+
     <!-- GET Method -->
     <div class="method">
         <h2>GET Method - Read Data</h2>
@@ -64,23 +100,102 @@
     </div>
 
     <script>
-        // GET - Read data
-        function sayHello() {
-            fetch('/hello')
+        // Calculator Functions - GET Methods
+        function addNumbers() {
+            const num1 = document.getElementById('calcNum1').value;
+            const num2 = document.getElementById('calcNum2').value;
+            
+            fetch(`/add?num1=${num1}&num2=${num2}`)
                 .then(response => response.text())
                 .then(data => {
-                    document.getElementById('getResult').textContent = data;
+                    document.getElementById('calcResult').textContent = data;
                 })
                 .catch(error => {
-                    document.getElementById('getResult').textContent = 'Error: ' + error.message;
+                    document.getElementById('calcResult').textContent = 'Error: ' + error.message;
                 });
         }
 
-        function addNumbers() {
-            const num1 = document.getElementById('num1').value;
-            const num2 = document.getElementById('num2').value;
+        function subtractNumbers() {
+            const num1 = document.getElementById('calcNum1').value;
+            const num2 = document.getElementById('calcNum2').value;
             
-            fetch(`/add?num1=${num1}&num2=${num2}`)
+            fetch(`/subtract?num1=${num1}&num2=${num2}`)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('calcResult').textContent = data;
+                })
+                .catch(error => {
+                    document.getElementById('calcResult').textContent = 'Error: ' + error.message;
+                });
+        }
+
+        function multiplyNumbers() {
+            const num1 = document.getElementById('calcNum1').value;
+            const num2 = document.getElementById('calcNum2').value;
+            
+            fetch(`/multiply?num1=${num1}&num2=${num2}`)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('calcResult').textContent = data;
+                })
+                .catch(error => {
+                    document.getElementById('calcResult').textContent = 'Error: ' + error.message;
+                });
+        }
+
+        function divideNumbers() {
+            const num1 = document.getElementById('calcNum1').value;
+            const num2 = document.getElementById('calcNum2').value;
+            
+            fetch(`/divide?num1=${num1}&num2=${num2}`)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('calcResult').textContent = data;
+                })
+                .catch(error => {
+                    document.getElementById('calcResult').textContent = 'Error: ' + error.message;
+                });
+        }
+
+        function powerNumbers() {
+            const num1 = document.getElementById('calcNum1').value;
+            const num2 = document.getElementById('calcNum2').value;
+            
+            fetch(`/power?num1=${num1}&num2=${num2}`)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('calcResult').textContent = data;
+                })
+                .catch(error => {
+                    document.getElementById('calcResult').textContent = 'Error: ' + error.message;
+                });
+        }
+
+        // POST Calculator
+        function calculateWithPost() {
+            const num1 = document.getElementById('postNum1').value;
+            const num2 = document.getElementById('postNum2').value;
+            const operation = document.getElementById('operation').value;
+            
+            fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ num1, num2, operation })
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('postCalcResult').textContent = data;
+            })
+            .catch(error => {
+                document.getElementById('postCalcResult').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        // GET - Read data
+        function sayHello() {
+            fetch('/hello')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('getResult').textContent = data;
