@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node.js Express API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .endpoint {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .method {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .url {
+            font-family: monospace;
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .description {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Node.js Express API</h1>
+        <p>Welcome to your Node.js Express API! This is a simple frontend view to test your API endpoints.</p>
+        
+        <h2>Available Endpoints:</h2>
+        
+        <div class="endpoint">
+            <div><span class="method">GET</span> <span class="url">/api</span></div>
+            <div class="description">Get API information</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">GET</span> <span class="url">/api/projects</span></div>
+            <div class="description">Get all projects</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">GET</span> <span class="url">/api/projects/:id</span></div>
+            <div class="description">Get project by ID</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">POST</span> <span class="url">/api/projects</span></div>
+            <div class="description">Create new project</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">PUT</span> <span class="url">/api/projects/:id</span></div>
+            <div class="description">Update project</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">DELETE</span> <span class="url">/api/projects/:id</span></div>
+            <div class="description">Delete project</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">GET</span> <span class="url">/api/food</span></div>
+            <div class="description">Get all food items</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">GET</span> <span class="url">/api/hello</span></div>
+            <div class="description">Simple hello message</div>
+        </div>
+        
+        <div class="endpoint">
+            <div><span class="method">GET</span> <span class="url">/health</span></div>
+            <div class="description">Health check endpoint</div>
+        </div>
+        
+        <h2>Testing the API:</h2>
+        <p>You can test these endpoints using tools like:</p>
+        <ul>
+            <li>Postman</li>
+            <li>cURL</li>
+            <li>Browser (for GET requests)</li>
+            <li>JavaScript fetch API</li>
+        </ul>
+        
+        <p><strong>Server Status:</strong> <span id="status">Checking...</span></p>
+    </div>
+
+    <script>
+        // Simple health check
+        fetch('/health')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').textContent = 'Server is running';
+                document.getElementById('status').style.color = 'green';
+            })
+            .catch(error => {
+                document.getElementById('status').textContent = 'Server is not running';
+                document.getElementById('status').style.color = 'red';
+            });
+    </script>
+</body>
+</html> 
