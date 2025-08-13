@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Management - MVC App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .food-list {
+            margin-top: 20px;
+        }
+        .food-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .food-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .food-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .status-available {
+            color: green;
+            font-weight: bold;
+        }
+        .status-unavailable {
+            color: red;
+            font-weight: bold;
+        }
+        
+        .student-info {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .student-info h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.5rem;
+        }
+        
+        .student-info p {
+            margin: 8px 0;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="student-info">
+            <h2>Student Information</h2>
+            <p><strong>Name:</strong> Krishna Chaudhari</p>
+            <p><strong>SID:</strong> S223751702</p>
+        </div>
+        
+        <h1>Food Management System</h1>
+        <p>This demonstrates the MVC architecture with a frontend interface.</p>
+        
+        <h2>Add New Food Item</h2>
+        <form id="foodForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                    <option value="">Select Category</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Fast Food">Fast Food</option>
+                    <option value="Asian">Asian</option>
+                    <option value="Mexican">Mexican</option>
+                    <option value="Dessert">Dessert</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" step="0.01" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="3" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="isAvailable" name="isAvailable" checked>
+                    Available
+                </label>
+            </div>
+            
+            <button type="submit">Add Food Item</button>
+        </form>
+        
+        <h2>Food Items</h2>
+        <div id="foodList" class="food-list">
+            <p>Loading food items...</p>
+        </div>
+    </div>
+
+    <script>
+        // Food Management JavaScript
+        class FoodManager {
+            constructor() {
+                this.apiUrl = '/api/food';
+                this.init();
+            }
+            
+            init() {
+                this.loadFoodItems();
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                document.getElementById('foodForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addFoodItem();
+                });
+            }
+            
+            async loadFoodItems() {
+                try {
+                    const response = await fetch(this.apiUrl);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.displayFoodItems(data.data);
+                    } else {
+                        console.error('Failed to load food items:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error loading food items:', error);
+                }
+            }
+            
+            displayFoodItems(foodItems) {
+                const foodList = document.getElementById('foodList');
+                
+                if (foodItems.length === 0) {
+                    foodList.innerHTML = '<p>No food items available.</p>';
+                    return;
+                }
+                
+                const foodHTML = foodItems.map(food => `
+                    <div class="food-item">
+                        <h3>${food.name}</h3>
+                        <p><strong>Category:</strong> ${food.category}</p>
+                        <p><strong>Price:</strong> $${food.price}</p>
+                        <p><strong>Description:</strong> ${food.description}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="status-${food.isAvailable ? 'available' : 'unavailable'}">
+                                ${food.isAvailable ? 'Available' : 'Unavailable'}
+                            </span>
+                        </p>
+                        <p><strong>Created:</strong> ${new Date(food.createdAt).toLocaleDateString()}</p>
+                    </div>
+                `).join('');
+                
+                foodList.innerHTML = foodHTML;
+            }
+            
+            async addFoodItem() {
+                const formData = new FormData(document.getElementById('foodForm'));
+                const foodData = {
+                    name: formData.get('name'),
+                    category: formData.get('category'),
+                    price: parseFloat(formData.get('price')),
+                    description: formData.get('description'),
+                    isAvailable: formData.get('isAvailable') === 'on'
+                };
+                
+                try {
+                    const response = await fetch(this.apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(foodData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('Food item added successfully!');
+                        document.getElementById('foodForm').reset();
+                        this.loadFoodItems();
+                    } else {
+                        alert('Failed to add food item: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error adding food item:', error);
+                    alert('Error adding food item. Please try again.');
+                }
+            }
+        }
+        
+        // Initialize the food manager when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new FoodManager();
+        });
+    </script>
+</body>
+</html>

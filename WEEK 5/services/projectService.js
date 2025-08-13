@@ -1,66 +1,74 @@
+const Project = require('../models/Project');
+
 // In-memory storage for projects (replace with database in production)
 let projects = [
-  {
-    id: '1',
-    name: 'Sample Project 1',
-    description: 'This is a sample project',
-    status: 'active',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    name: 'Sample Project 2',
-    description: 'Another sample project',
-    status: 'completed',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
+  new Project({
+    id: 1,
+    name: 'Project 1',
+    description: 'First project',
+    status: 'active'
+  }),
+  new Project({
+    id: 2,
+    name: 'Project 2',
+    description: 'Second project',
+    status: 'completed'
+  })
 ];
 
 // Get all projects
 const getAllProjects = async () => {
-  return projects;
+  return projects.map(project => project.toJSON());
 };
 
 // Get project by ID
 const getProjectById = async (id) => {
-  return projects.find(project => project.id === id);
+  const project = projects.find(project => project.id == id);
+  return project ? project.toJSON() : null;
 };
 
 // Create new project
 const createProject = async (projectData) => {
-  const newProject = {
-    id: Date.now().toString(),
-    ...projectData,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  const project = new Project(projectData);
   
-  projects.push(newProject);
-  return newProject;
+  // Validate the project data
+  const validationErrors = project.validate();
+  if (validationErrors.length > 0) {
+    throw new Error(`Validation failed: ${validationErrors.join(', ')}`);
+  }
+  
+  projects.push(project);
+  return project.toJSON();
 };
 
 // Update project
 const updateProject = async (id, updateData) => {
-  const projectIndex = projects.findIndex(project => project.id === id);
+  const projectIndex = projects.findIndex(project => project.id == id);
   
   if (projectIndex === -1) {
     return null;
   }
   
-  projects[projectIndex] = {
+  // Create updated project object
+  const updatedProject = new Project({
     ...projects[projectIndex],
     ...updateData,
-    updatedAt: new Date().toISOString()
-  };
+    id: id // Preserve the original ID
+  });
   
-  return projects[projectIndex];
+  // Validate the updated data
+  const validationErrors = updatedProject.validate();
+  if (validationErrors.length > 0) {
+    throw new Error(`Validation failed: ${validationErrors.join(', ')}`);
+  }
+  
+  projects[projectIndex] = updatedProject;
+  return updatedProject.toJSON();
 };
 
 // Delete project
 const deleteProject = async (id) => {
-  const projectIndex = projects.findIndex(project => project.id === id);
+  const projectIndex = projects.findIndex(project => project.id == id);
   
   if (projectIndex === -1) {
     return null;
@@ -69,7 +77,7 @@ const deleteProject = async (id) => {
   const deletedProject = projects[projectIndex];
   projects.splice(projectIndex, 1);
   
-  return deletedProject;
+  return deletedProject.toJSON();
 };
 
 module.exports = {

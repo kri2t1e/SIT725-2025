@@ -1,48 +1,48 @@
+const Food = require('../models/Food');
+
 // In-memory storage for food items (replace with database in production)
 let foodItems = [
-  {
+  new Food({
     id: '1',
     name: 'Pizza',
     category: 'Italian',
     price: 15.99,
     description: 'Delicious Italian pizza',
-    isAvailable: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
+    isAvailable: true
+  }),
+  new Food({
     id: '2',
     name: 'Burger',
     category: 'Fast Food',
     price: 12.99,
     description: 'Classic beef burger',
-    isAvailable: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
+    isAvailable: true
+  })
 ];
 
 // Get all food items
 const getAllFood = async () => {
-  return foodItems;
+  return foodItems.map(food => food.toJSON());
 };
 
 // Get food by ID
 const getFoodById = async (id) => {
-  return foodItems.find(food => food.id === id);
+  const food = foodItems.find(food => food.id === id);
+  return food ? food.toJSON() : null;
 };
 
 // Create new food item
 const createFood = async (foodData) => {
-  const newFood = {
-    id: Date.now().toString(),
-    ...foodData,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  const food = new Food(foodData);
   
-  foodItems.push(newFood);
-  return newFood;
+  // Validate the food data
+  const validationErrors = food.validate();
+  if (validationErrors.length > 0) {
+    throw new Error(`Validation failed: ${validationErrors.join(', ')}`);
+  }
+  
+  foodItems.push(food);
+  return food.toJSON();
 };
 
 // Update food item
@@ -53,13 +53,21 @@ const updateFood = async (id, updateData) => {
     return null;
   }
   
-  foodItems[foodIndex] = {
+  // Create updated food object
+  const updatedFood = new Food({
     ...foodItems[foodIndex],
     ...updateData,
-    updatedAt: new Date().toISOString()
-  };
+    id: id // Preserve the original ID
+  });
   
-  return foodItems[foodIndex];
+  // Validate the updated data
+  const validationErrors = updatedFood.validate();
+  if (validationErrors.length > 0) {
+    throw new Error(`Validation failed: ${validationErrors.join(', ')}`);
+  }
+  
+  foodItems[foodIndex] = updatedFood;
+  return updatedFood.toJSON();
 };
 
 // Delete food item
@@ -73,7 +81,7 @@ const deleteFood = async (id) => {
   const deletedFood = foodItems[foodIndex];
   foodItems.splice(foodIndex, 1);
   
-  return deletedFood;
+  return deletedFood.toJSON();
 };
 
 module.exports = {

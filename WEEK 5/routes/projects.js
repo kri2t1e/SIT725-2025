@@ -1,36 +1,20 @@
 const express = require('express');
 const router = express.Router();
-
-// Sample projects data
-let projects = [
-    { id: 1, name: 'Project 1', description: 'First project' },
-    { id: 2, name: 'Project 2', description: 'Second project' }
-];
+const projectController = require('../controllers/projectController');
 
 // GET all projects
-router.get('/', (req, res) => {
-    res.json(projects);
-});
+router.get('/', projectController.getAllProjects);
 
 // GET project by ID
-router.get('/:id', (req, res) => {
-    const project = projects.find(p => p.id == req.params.id);
-    if (project) {
-        res.json(project);
-    } else {
-        res.status(404).json({ error: 'Project not found' });
-    }
-});
+router.get('/:id', projectController.getProjectById);
 
 // POST create new project
-router.post('/', (req, res) => {
-    const newProject = {
-        id: projects.length + 1,
-        name: req.body.name,
-        description: req.body.description
-    };
-    projects.push(newProject);
-    res.status(201).json(newProject);
-});
+router.post('/', projectController.createProject);
+
+// PUT update project
+router.put('/:id', projectController.updateProject);
+
+// DELETE project
+router.delete('/:id', projectController.deleteProject);
 
 module.exports = router; 
